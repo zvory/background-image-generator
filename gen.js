@@ -5,8 +5,8 @@ var ctx;
 function Queue(){var a=[],b=0;this.getLength=function(){return a.length-b};this.isEmpty=function(){return 0==a.length};this.enqueue=function(b){a.push(b)};this.dequeue=function(){if(0!=a.length){var c=a[b];2*++b>=a.length&&(a=a.slice(b),b=0);return c}};this.peek=function(){return 0<a.length?a[b]:void 0}};
 //end stephemorley code
 
-var WIDTH = 400;
-var HEIGHT = 400;
+var WIDTH = 200;
+var HEIGHT = 200;
 
 window.onload = function () {
     canvas = document.getElementById("canvas");
@@ -18,12 +18,12 @@ function rand(min, max) {
         return min + Math.random() * (max - min);
 }
 function get_random_color() {
-    //var h = 200+ rand(1, 90); 
-    //var s = rand(0, 100);
-    //var l = rand(30, 100);
-    var h = 220;
-    var s = 100;
-    var l = rand(10, 80);
+    var h = 100+ rand(1, 190); 
+    var s = rand(0, 100);
+    var l = rand(30, 100);
+    //var h = 220;
+    //var s = 100;
+    //var l = rand(10, 80);
     return 'hsl(' + h + ',' + s + '%,' + l + '%)';
 }
 function drawWalk () {
@@ -103,7 +103,7 @@ function drawToCanvas(grid) {
     grid.forEach(function (arr , x) {
         arr.forEach(function (val, y) {
             if (val)
-                ctx.fillRect(x, y, 1, 1);
+                ctx.fillRect(x*4, y*4, 4, 4);
         });
     });
 }
