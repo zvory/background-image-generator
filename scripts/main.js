@@ -14,6 +14,7 @@ requirejs(["Queue"], function(util) {
     dependenciesLoaded=true;
     if (windowLoaded){
         setInterval(randomWalk, 10);
+        setInterval(reset, 5000);
     }
 });
 
@@ -34,9 +35,9 @@ function begin () {
     window.addEventListener('resize', resizeCanvas, false);
     if (dependenciesLoaded){
         setInterval(randomWalk, 10);
+        setInterval(reset, 5000);
     }
 }
-
 
 function randomInRange(min, max) {
         return min + Math.random() * (max - min);
@@ -85,7 +86,8 @@ function randomWalk () {
 
     var grid = make2DArr(WIDTH, HEIGHT);
 
-    for (var steps =0; steps < 500000; steps ++){
+    var steps = WIDTH * HEIGHT * 8;
+    for (var i=0; i< steps; i++){
         switch(Math.floor (Math.random() * 4)) {
             case 0:
                 x++;
@@ -105,13 +107,10 @@ function randomWalk () {
         grid[x][y] = true;
     }
 
-    ctx.fillStyle = get_random_color();
-    ctx.globalAlpha=0.2;
     var toDraw = findLargestSpace(grid);
     if (toDraw !== null)
         drawToCanvas(toDraw);
 }
-
 
 function findLargestSpace (grid) {
     var filled = [];
@@ -139,13 +138,17 @@ function findLargestSpace (grid) {
                 }
             }
         }
-        if (size > 1000)
+        if (size > 1000){
             return filled;
+        }
     }
+    console.log(new Date().getTime() - start);
     return null;
 }
 
 function drawToCanvas(grid) {
+    ctx.fillStyle = get_random_color();
+    ctx.globalAlpha=0.5;
     grid.forEach(function (arr , x) {
         arr.forEach(function (val, y) {
             if (val)
@@ -158,4 +161,11 @@ if (pageIsLoaded) {
     begin();
 } else {
     window.addEventListener('load',begin);
+}
+
+function reset () {
+    minHue= randomInRange(0,300);
+    minLightness = randomInRange(20, 70);
+    counter=minHue;
+    ctx.clearRect(0, 0, WIDTH*4, HEIGHT*4);
 }
