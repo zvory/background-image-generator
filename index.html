@@ -2,12 +2,20 @@
 <html>
     <head>
         <title>
-            Cool Thing Genrator
+            Neat Image Generator
         </title>
-        <script type="text/javascript" src="gen.js"></script>
+        <script data-main="scripts/main" src="scripts/require.js"></script>
+        <link rel="stylesheet" type"text/css" href="css/style.css">
     </head>
     <body>
-        <canvas id="canvas" width="800" height="800">
+        <script>
+            var pageIsLoaded=false;
+            window.addEventListener('load',function(){
+                pageIsLoaded=true;
+            });
+        </script>
+
+        <canvas id="canvas" width="1920" height="1080">
         </canvas>
     </body>
 </html>
