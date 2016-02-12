@@ -9,16 +9,17 @@ var windowLoaded= false;
 var WIDTH = 480;
 var HEIGHT = 270;
 
+var prints = 0;
+
 requirejs(["Queue"], function(util) {
     Queue = util;
     dependenciesLoaded=true;
     if (windowLoaded){
-        setInterval(randomWalk, 10);
-        setInterval(reset, 5000);
+        setInterval(driver, 10);
     }
 });
 
-function begin () {
+function onWindowLoad () {
     windowLoaded=true;
     canvas = document.getElementById("canvas");
 
@@ -34,8 +35,7 @@ function begin () {
     
     window.addEventListener('resize', resizeCanvas, false);
     if (dependenciesLoaded){
-        setInterval(randomWalk, 10);
-        setInterval(reset, 5000);
+        setInterval(driver, 10);
     }
 }
 
@@ -79,6 +79,19 @@ function make2DArr (width, height) {
         });
 }
 
+function driver () {
+    //Resets canvas if we have printed over 100 times
+    if (prints > 100)
+        resetCanvas();
+
+    var grid = randomWalk();
+    var toDraw = findLargestSpace(grid);
+    if (toDraw !== null){
+        prints ++;
+        drawToCanvas(toDraw);
+    }
+}
+
 function randomWalk () {
     if (!dependenciesLoaded || !windowLoaded){
         return;
@@ -106,17 +119,14 @@ function randomWalk () {
         y = Math.floor(Math.abs((y>=HEIGHT) ? HEIGHT-1: y));
         grid[x][y] = true;
     }
+    return grid;
 
-    var toDraw = findLargestSpace(grid);
-    if (toDraw !== null)
-        drawToCanvas(toDraw);
 }
 
 function findLargestSpace (grid) {
     var filled = [];
     var counter = 0;
-    var start = new Date().getTime();
-    while (counter < 8 && (new Date().getTime() - start) < 40 ) {
+    while (counter < 2 ) {
         counter ++;
         filled = make2DArr(WIDTH, HEIGHT);
         var size = 0;
@@ -138,11 +148,10 @@ function findLargestSpace (grid) {
                 }
             }
         }
-        if (size > 1000){
+        if (size > WIDTH*HEIGHT/50){
             return filled;
         }
     }
-    console.log(new Date().getTime() - start);
     return null;
 }
 
@@ -157,15 +166,17 @@ function drawToCanvas(grid) {
     });
 }
 
-if (pageIsLoaded) {
-    begin();
-} else {
-    window.addEventListener('load',begin);
-}
-
-function reset () {
+function resetCanvas () {
+    prints = 0;
     minHue= randomInRange(0,300);
     minLightness = randomInRange(20, 70);
     counter=minHue;
     ctx.clearRect(0, 0, WIDTH*4, HEIGHT*4);
 }
+
+if (pageIsLoaded) {
+    onWindowLoad();
+} else {
+    window.addEventListener('load',onWindowLoad);
+}
+
