@@ -15,7 +15,7 @@ requirejs(["Queue"], function(util) {
     Queue = util;
     dependenciesLoaded=true;
     if (windowLoaded){
-        setInterval(driver, 10);
+        setInterval(driver, 0);
     }
 });
 
@@ -35,7 +35,7 @@ function onWindowLoad () {
     
     window.addEventListener('resize', resizeCanvas, false);
     if (dependenciesLoaded){
-        setInterval(driver, 10);
+        setInterval(driver, 0);
     }
 }
 
@@ -79,10 +79,17 @@ function make2DArr (width, height) {
         });
 }
 
+
+let startTime = performance.now()
+
 function driver () {
     //Resets canvas if we have printed over 100 times
-    if (prints > 100)
+    if (prints > 100) {
+        const endTime = performance.now()
+        console.log(`${(endTime-startTime)/1000}s`);
+        startTime = endTime;
         resetCanvas();
+    }
 
     var grid = randomWalk();
     var toDraw = findLargestSpace(grid);
