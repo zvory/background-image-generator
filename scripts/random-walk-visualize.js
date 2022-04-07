@@ -168,6 +168,7 @@ function randomWalk(grid = make2DArr(WIDTH, HEIGHT), stepsTaken = 0, x = 0, y = 
 const drawCrossOn = (x, y) => {
     for (let i = 0; i < 50; i++) {
         ctx.fillStyle = 'hsl(0, 100%, 1%)';
+        ctx.globalAlpha=1
         ctx.fillRect((x + i) * 4, y * 4, 4, 4);
         ctx.fillRect((x - i) * 4, y * 4, 4, 4);
         ctx.fillRect((x) * 4, (y - i) * 4, 4, 4);
@@ -188,6 +189,10 @@ const redrawRandomWalkGrid = (grid) => {
 }
 
 const pickSpotForLargestSpace = (grid, attempts = 0) => {
+    if (attempts >= 2) {
+        setTimeout(randomWalk, 500)
+        return
+    }
     const x = Math.floor(Math.random() * WIDTH)
     const y = Math.floor(Math.random() * HEIGHT)
     drawCrossOn(x, y)
@@ -196,16 +201,16 @@ const pickSpotForLargestSpace = (grid, attempts = 0) => {
     if (!!!grid[x][y]) {
         setTimeout(() => {
             redrawRandomWalkGrid(grid)
-            bfs(grid, x, y)
-        }, 1000)
+            bfs(grid, x, y, toVisit = [], size = 0, filled = make2DArr(WIDTH, HEIGHT), color = get_other_random_color(), stepsToTake = 100, attempts)
+        }, 500)
     } else {
         if (attempts === 0) {
             setTimeout(() => {
                 redrawRandomWalkGrid(grid)
-                pickSpotForLargestSpace(grid, attempts = 1)
-            }, 1000)
+                pickSpotForLargestSpace(grid, attempts+1)
+            }, 500)
         } else {
-            setTimeout(randomWalk, 1000)
+            setTimeout(randomWalk, 500)
         }
     }
 }
@@ -248,7 +253,7 @@ const drawDrawn = () => {
 }
 
 
-const bfs = (grid, x, y, toVisit = [], size = 0, filled = make2DArr(WIDTH, HEIGHT), color = get_other_random_color(), stepsToTake = 100) => {
+const bfs = (grid, x, y, toVisit = [], size = 0, filled = make2DArr(WIDTH, HEIGHT), color = get_other_random_color(), stepsToTake = 100, attempts =0) => {
     toVisit.push({ x: x, y: y })
 
     let stepsTaken = 0
@@ -264,7 +269,7 @@ const bfs = (grid, x, y, toVisit = [], size = 0, filled = make2DArr(WIDTH, HEIGH
 
         if (stepsTaken > stepsToTake) {
             const newSteps = stepsToTake > 10000 ? stepsToTake *1.2 : stepsToTake *2
-            setTimeout(() => bfs(grid, loc.x, loc.y, toVisit, size, filled, color, newSteps), 0)
+            setTimeout(() => bfs(grid, loc.x, loc.y, toVisit, size, filled, color, newSteps, attempts), 0)
             return
         }
 
@@ -303,13 +308,13 @@ const bfs = (grid, x, y, toVisit = [], size = 0, filled = make2DArr(WIDTH, HEIGH
             drawDrawn()
             setTimeout(() => {
                 randomWalk(grid = make2DArr(WIDTH, HEIGHT), stepsTaken = 0,x= lastVisited.x, y=lastVisited.y)    
-            }, 1000)
-        }, 0000)
+            },500)
+        }, 500)
     } else {
         setTimeout(() => {
             redrawRandomWalkGrid(grid)
-            pickSpotForLargestSpace(grid, attempts = 1)
-        }, 1000)
+            pickSpotForLargestSpace(grid, attempts +1)
+        }, 500)
     }
 }
 
